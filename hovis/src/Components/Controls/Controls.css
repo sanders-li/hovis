@@ -1,0 +1,7 @@
+#controls {
+    position: fixed;
+    margin: 3% 3%;
+    left: 0%;
+    bottom: 0%;
+    display: grid;
+}

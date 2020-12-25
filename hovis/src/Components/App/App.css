@@ -1,0 +1,53 @@
+.app {
+  cursor: crosshair !important;
+}
+
+#map {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+#tooltip {
+  position: absolute;
+  background: white;
+  margin: 10px;
+  padding: 10px;
+  z-index: 1;
+  overflow: hidden;
+  text-align: center;
+}
+
+#tooltip h1 {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#tooltip h2 {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#tooltip .table {
+  margin: 0;
+  padding: 5% 5%;
+  font-size: 12px;
+}
+
+#tooltip .table .stats {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 2fr 2fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  text-align: center;
+  justify-items: center;
+  align-items: center;
+  white-space: nowrap;
+}
+
+#tooltip .stats strong.left {
+  justify-self: end;
+}
