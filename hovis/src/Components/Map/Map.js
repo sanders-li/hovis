@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React from 'react'
 import axios from 'axios'
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer, LineLayer } from '@deck.gl/layers';
@@ -31,16 +31,21 @@ const rg_gradient = (percent) => {
     return [255 * r, 255 * g, 0]
 }
 
-const data = [
-    {sourcePosition: [-122.41669, 37.7853], targetPosition: [-122.41669, 37.781]}
-];
+function Map({ sourceData, collection_week }) {
+    //const [hoverInfo, setHoverInfo] = useState;
+    // Use useEffect instead?
+    /*
+    {hoverInfo.object && (
+        <div style={{left: hoverInfo.x, top: hoverInfo.y}}>
+            <Tooltip object={hoverInfo.object} />
+        </div>
+    )}
+    */
 
-function Map({}) {
-    const layers = [
-        /*
+    let layers = [
         new ScatterplotLayer({
             id: 'scatter',
-            data: sourceData,
+            data: sourceData[collection_week],
             opacity: 0.8,
             filled: true,
             radiusMinPixels: 3,
@@ -49,20 +54,10 @@ function Map({}) {
             getFillColor: d => rg_gradient(d.inpatient_occupancy),
           
             pickable: true,
-            onHover: info => setHoverInfo(info)
-        }
-        */
-       new LineLayer({id: 'line', data})
+            // onHover: info => setHoverInfo(info)
+        })
     ];
 
-    //const [hoverInfo, setHoverInfo] = useState;
-    /*
-    {hoverInfo.object && (
-            <div style={{left: hoverInfo.x, top: hoverInfo.y,}}>
-                <Tooltip data={hoverInfo.object} />
-            </div>
-        )}
-        */
     return (
         <DeckGL
           initialViewState={INITIAL_VIEW_STATE}

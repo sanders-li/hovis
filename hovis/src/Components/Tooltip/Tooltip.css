@@ -1,12 +1,15 @@
 #tooltip {
-    display: none;
+    display: block;
     position: absolute;
-    background: white;
+    color: white;
+    background: black;
     margin: 10px;
     padding: 10px;
     z-index: 1;
     opacity: 0.9;
     text-align: center;
+    transition: ease-in-out 0.2s;
+    border-radius: 5px;
 }
   
 #tooltip h1 {
@@ -21,7 +24,7 @@
 
 #tooltip .table {
     margin: 0;
-    padding: 5% 5%;
+    padding: 0% 5%;
     font-size: 12px;
 }
 
@@ -39,4 +42,8 @@
 
 #tooltip .stats strong.left {
     justify-self: end;
+}
+
+#tooltip .coord {
+    font-size: 12px;
 }

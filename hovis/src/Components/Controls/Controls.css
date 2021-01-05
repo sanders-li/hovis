@@ -1,7 +1,97 @@
 #controls {
-    position: fixed;
-    margin: 3% 3%;
-    left: 0%;
-    bottom: 0%;
+    padding: 0.75rem;
+    background-color: black;
+    border-radius: 1rem;
     display: grid;
+    grid-gap: 0.5rem;
+    grid-template-rows: 2fr 2fr 3fr;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas: 
+        "icu icu about"
+        "covid covid ."
+        "facilities heatmap hexagons";
+    align-items: center;
+}
+
+#controls .switch {
+    height: 2.5rem;
+}
+
+#controls #icu {
+    grid-area: icu;
+}
+
+#controls #covid {
+    grid-area: covid;
+}
+
+#controls button {
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 300ms ease-in-out;
+}
+
+#controls #about-button {
+    grid-area: about;
+    margin: 0.5rem;
+    padding: 0.5rem;
+}
+
+#controls #facilities {
+    grid-area: facilities;
+}
+
+#controls #heatmap {
+    grid-area: heatmap;
+}
+
+#controls #hexagon {
+    grid-area: hexagons;
+}
+
+#controls .emoji {
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+#controls .button-text {
+    margin-top: 0.25rem;
+}
+
+#controls button.enabled {
+    background-color: green;
+    color: white;
+    transform: translateY(-5px);
+}
+
+#controls button.disabled {
+    background-color: #eeeeee;
+    color: black;
+}
+
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#about {
+    max-width: 80%;
+    min-width: 50%;
+    color: black;
+    background-color: #dddddd;
+    border-radius: 0.5rem;
+    box-shadow: 5px 10px #black;
+    padding: 1rem 2rem;
+}
+
+#about a{
+    color: blue;
+}
+
+#about hr{
+    border-top: 1px solid gray;
+    margin: 1rem 1rem;
 }
