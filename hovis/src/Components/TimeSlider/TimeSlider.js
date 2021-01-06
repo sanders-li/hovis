@@ -4,16 +4,12 @@ import { withStyles } from '@material-ui/core/styles'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import {
-    XYPlot,
     FlexibleXYPlot,
-    XAxis,
     YAxis,
     VerticalGridLines,
     HorizontalGridLines,
     LineMarkSeriesCanvas,
     LineMarkSeries,
-    LineSeriesCanvas,
-    LineSeries,
     Crosshair
   } from 'react-vis';
 import 'react-vis/dist/style.css';
@@ -156,11 +152,6 @@ class TimeSlider extends React.Component {
                             track={false}
                         />
                     </div>
-                    {/*
-                    <div className="slider-labels">
-                        {this.props.weeks && this.props.weeks.map((v,i) => <div className="labels" key={`label-${i}`}>{v}</div>)}
-                    </div>
-                    */}
                 </div>
             </div>
         )

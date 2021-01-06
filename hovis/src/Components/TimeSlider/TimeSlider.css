@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
 #time-slider {
     margin-left: 1rem;
     padding: 0.5rem 1rem;
@@ -58,10 +60,10 @@
 }
 
 #time-slider .slider-container {
-    padding-left: 40px;
-    padding-right: 10px;
+    padding-left: 39px;
+    padding-right: 11px;
     margin-top: -35px;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
 }
 
 #time-slider .slider {
@@ -74,16 +76,10 @@
 #time-slider .slider .MuiSlider-markLabel{
     color: white;
     transform: rotate(90deg);
-    margin: -0.2rem 0.4rem;
+    margin: -0.3rem 0.4rem;
     transform-origin: left top 0;
     font-size: 0.6rem;
-}
-
-#time-slider .slider-labels {
-    font-size: 1rem;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    font-family: 'Varela Round';
 }
 
 #time-slider .slider-labels .labels{

@@ -3,9 +3,11 @@ import axios from 'axios'
 import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer } from '@deck.gl/layers';
 import { HeatmapLayer, HexagonLayer } from '@deck.gl/aggregation-layers';
-import {StaticMap} from 'react-map-gl';
-import { CircularProgress } from '@material-ui/core';
+import { StaticMap } from 'react-map-gl';
+import { CircularProgress, Slide } from '@material-ui/core';
 import { connect } from 'react-redux'
+import { CSSTransition } from 'react-transition-group'
+import chroma from 'chroma-js'
 
 import Controls from '../Controls/Controls'
 import Tooltip from '../Tooltip/Tooltip'
@@ -17,25 +19,12 @@ const key = require('./keys.json').mapbox
 
 // Viewport settings
 const INITIAL_VIEW_STATE = {
-    longitude: -95,
+    longitude: -94,
     latitude: 37,
-    zoom: 4,
+    zoom: 3.5,
     pitch: 0,
     bearing: 0
 };
-  
-const rg_gradient = (percent) => {
-    let percent_clamped = Math.min(Math.max(percent, 0), 1);
-    let r, g;
-    if (percent_clamped < 0.5) {
-        r = (percent_clamped)/0.5; g = 1;
-    } else if (percent_clamped > 0.5) {
-        r = 1; g = (percent_clamped-0.5)/0.5
-    } else {
-        r = 1; g = 1;
-    }
-    return [255 * r, 255 * g, 0]
-}
 
 class App extends React.Component {
   constructor(props) {
@@ -45,7 +34,9 @@ class App extends React.Component {
       collection_week: '',
       weeks: [],
       num_hospitals: 0,
-      hoverInfo: {},
+      highContrast: false,
+      gradient: chroma.scale(['00ff00', 'ffff00', 'ff0000']).mode('hsl'),
+      showDashboard: true,
       icu: false,
       covid: false,
       metric: 'inpatient_occupancy',
@@ -55,6 +46,7 @@ class App extends React.Component {
         'inpatient_covid_occupancy': 0, 
         'icu_covid_occupancy': 0
       },
+      hoverInfo: {},
       scatterLayer: true,
       heatmapLayer: false,
       hexagonLayer: false
@@ -62,6 +54,8 @@ class App extends React.Component {
     this.getData = this.getData.bind(this)
     this.setHoverInfo = this.setHoverInfo.bind(this)
     this.aggregateMetricAvgs = this.aggregateMetricAvgs.bind(this)
+    this._handleDashboard = this._handleDashboard.bind(this)
+    this.handleContrast = this.handleContrast.bind(this)
     this.handleICUSwitch = this.handleICUSwitch.bind(this)
     this.handleCovidSwitch = this.handleCovidSwitch.bind(this)
     this.handleMetricChange = this.handleMetricChange.bind(this)
@@ -85,7 +79,7 @@ class App extends React.Component {
   }
 
   getData() {
-    axios.get('./reported_hospital_capacity_admissions_facility_level_weekly_average_timeseries_20201215_metrics_grouped.json')
+    axios.get('./reported_hospital_capacity_admissions_facility_level_weekly_average_timeseries_20210103_metrics_grouped.json')
     .then(results => {
       this.setState({
         sourceData: results.data,
@@ -116,15 +110,27 @@ class App extends React.Component {
             return acc
           }
         }, 0)
+        hospitals_total.push(hospitals)
         metric_avg.push({ x: i, y: Math.round(total/n * 10 ** 4)/(10**2) })
       }
-      hospitals_total.push(hospitals)
       metric_avgs[metric] = metric_avg
     }
     const hospitals_avg = Math.round(hospitals_total.reduce((acc, c) => acc + c) / hospitals_total.length)
     this.setState({
       metricAvgs: metric_avgs,
       num_hospitals: hospitals_avg
+    })
+  }
+  
+  _handleDashboard() {
+    this.setState({ showDashboard: !this.state.showDashboard })
+  }
+
+  handleContrast() {
+    const {highContrast} = this.state
+    this.setState({
+      highContrast: !highContrast,
+      gradient: !highContrast ? chroma.scale(['0f2080', 'a95aa1', 'ffff00']).mode('hsl') : chroma.scale(['00ff00', 'ffff00', 'ff0000']).mode('hsl')
     })
   }
 
@@ -162,31 +168,66 @@ class App extends React.Component {
     let metric = this.state.icu ? 'icu_' : 'inpatient_'
     metric += this.state.covid ? 'covid_' : ''
     this.setState({ metric: (metric + 'occupancy') })
+    console.log(`metric is now ${metric}occupancy`)
   }
 
   render() {
     if (!this.state.collection_week || !this.state.sourceData) {
-      return <div id='loading'><CircularProgress /></div>
+      return (
+        <div id='loading'>
+          <CircularProgress size="5rem"/>
+          <h3>Loading 🏥 datapoints . . . </h3>
+        </div>
+      )
     } else {
       const layers = [
-        new ScatterplotLayer({
-            id: 'scatter',
-            data: this.state.sourceData[this.state.collection_week],
-            opacity: 0.8,
-            filled: true,
-            radiusMinPixels: 3,
-            radiusMaxPixels: 100,
-            radiusScale: 100,
-            getPosition: d => [d.lng, d.lat],
-            getFillColor: d => rg_gradient(d.inpatient_occupancy),
-          
-            pickable: true,
-            onHover: info => this.setHoverInfo(info)
-        })
-    ];
+        (this.state.scatterLayer && new ScatterplotLayer({
+          id: 'scatter',
+          data: this.state.sourceData[this.state.collection_week],
+          opacity: 0.6,
+          filled: true,
+          radiusMinPixels: 3,
+          radiusMaxPixels: 10,
+          radiusScale: 3000,
+          getPosition: d => [d.lng, d.lat],
+          getFillColor: d => this.state.gradient(Math.min(Math.max(d[this.state.metric], 0), 1)).rgb(),
+          pickable: true,
+          onHover: info => this.setHoverInfo(info),
+          updateTriggers: {
+            getPosition: this.state.metric,
+            getFillColor: this.state.metric,
+            getFillColor: this.state.gradient
+          }
+        })),
+        (this.state.heatmapLayer && new HeatmapLayer({
+          id: 'heatmap',
+          data: this.state.sourceData[this.state.collection_week],
+          getPosition: d => [d.lng, d.lat],
+          getWeight: d => d[this.state.metric],
+          radiusPixels: 50,
+          opacity: 0.4,
+          updateTriggers: {
+            getPosition: this.state.metric,
+            getFillColor: this.state.metric
+          }
+        })),
+        (this.state.hexagonLayer && new HexagonLayer({
+          id: 'hexagon',
+          data: this.state.sourceData[this.state.collection_week],
+          getPosition: d => [d.lng, d.lat],
+          getElevationWeight: d => d[this.state.metric], //weight should be occupied/all for sum of all hospitals in hex
+          elevationScale: 1000,
+          extruded: true,
+          radius: 16090,
+          opacity: 0.6,
+          updateTriggers: {
+            getPosition: this.state.metric,
+            getElevationWeight: this.state.metric
+          }
+        }))
+      ];
       return (
         <div className="app">
-          {/*
           <DeckGL
             initialViewState={INITIAL_VIEW_STATE}
             controller={true}
@@ -197,35 +238,41 @@ class App extends React.Component {
           {this.state.hoverInfo.object && (
             <Tooltip object={this.state.hoverInfo.object} x={this.state.hoverInfo.x} y={this.state.hoverInfo.y} />
           )}
-          */}
           <div id="test">
             <div>{this.state.collection_week}</div>
             <div>{this.state.icu ? 'icu' : 'inpatient'}</div>
             <div>{this.state.covid ? 'covid' : 'all' }</div>
+            <div>{layers.map(e => e.id).indexOf('scatter')}</div>
+            <div>{layers.map(e => e.id).indexOf('heatmap')}</div>
+            <div>{layers.map(e => e.id).indexOf('hexagon')}</div>
           </div>
           <div id="dashboard-container">
-            <button className="toggle-dashboard" onClick={this.handleDashboard}>
-              <icon className="fas fa-chevron-down"></icon>
+            <button className="toggle-dashboard" onClick={this._handleDashboard}>
+              <i className={"fas fa-chevron-"+(this.state.showDashboard ? "down" : "up")}></i>
             </button>
-            <div id="dashboard">
-              <Controls 
-                handleICUSwitch={this.handleICUSwitch} 
-                handleCovidSwitch={this.handleCovidSwitch} 
-                handleScatterToggle={this.handleScatterToggle}
-                handleHeatmapToggle={this.handleHeatmapToggle}
-                handleHexagonToggle={this.handleHexagonToggle}
-                scatterLayer={this.state.scatterLayer}
-                heatmapLayer={this.state.heatmapLayer}
-                hexagonLayer={this.state.hexagonLayer}
-                weeks={this.state.weeks}
-                hospitals={this.state.num_hospitals}
-              />
-              <TimeSlider 
-                weeks={this.state.weeks} 
-                collection_week={this.state.collection_week} 
-                chartData={this.state.metricAvgs[this.state.metric]} 
-              />
-          </div>
+            <Slide direction="up" in={this.state.showDashboard} mountOnEnter unmountOnExit>
+              <div id="dashboard">
+                <Controls 
+                  highContrast={this.state.highContrast}
+                  handleContrast={this.handleContrast}
+                  handleICUSwitch={this.handleICUSwitch} 
+                  handleCovidSwitch={this.handleCovidSwitch} 
+                  handleScatterToggle={this.handleScatterToggle}
+                  handleHeatmapToggle={this.handleHeatmapToggle}
+                  handleHexagonToggle={this.handleHexagonToggle}
+                  scatterLayer={this.state.scatterLayer}
+                  heatmapLayer={this.state.heatmapLayer}
+                  hexagonLayer={this.state.hexagonLayer}
+                  weeks={this.state.weeks}
+                  hospitals={this.state.num_hospitals}
+                />
+                <TimeSlider 
+                  weeks={this.state.weeks} 
+                  collection_week={this.state.collection_week} 
+                  chartData={this.state.metricAvgs[this.state.metric]} 
+                />
+              </div>
+            </Slide>
           </div>
         </div>
       );

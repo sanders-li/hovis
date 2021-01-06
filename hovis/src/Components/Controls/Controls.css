@@ -4,13 +4,51 @@
     border-radius: 1rem;
     display: grid;
     grid-gap: 0.5rem;
-    grid-template-rows: 2fr 2fr 3fr;
+    grid-template-rows: 2fr 2fr 2fr 3fr;
     grid-template-columns: repeat(3, 1fr);
     grid-template-areas: 
-        "icu icu about"
-        "covid covid ."
+        "color-toggle . about"
+        "bed-label icu icu"
+        "patient-label covid covid"
         "facilities heatmap hexagons";
+    justify-content: center;
     align-items: center;
+}
+
+#controls #color-toggle {
+    grid-area: color-toggle;
+    font-size: 1.5rem;
+    padding: 0.5rem;
+    outline: none;
+}
+
+#controls #color-toggle.enabled {
+    color: white;
+    background-color: transparent;
+}
+
+#controls #color-toggle.disabled {
+    color: black;
+    background-color: white;
+}
+
+#controls .switch-label {
+    color: white;
+    cursor: default;
+}
+
+#controls #about-button {
+    grid-area: about;
+    margin: 0.5rem;
+    padding: 0.5rem;
+}
+
+#controls #bed-label {
+    grid-area: bed-label;
+}
+
+#controls #patient-label {
+    grid-area: patient-label;
 }
 
 #controls .switch {
@@ -33,10 +71,8 @@
     transition: transform 300ms ease-in-out;
 }
 
-#controls #about-button {
-    grid-area: about;
-    margin: 0.5rem;
-    padding: 0.5rem;
+#controls label {
+    text-align: center
 }
 
 #controls #facilities {
@@ -75,23 +111,4 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-#about {
-    max-width: 80%;
-    min-width: 50%;
-    color: black;
-    background-color: #dddddd;
-    border-radius: 0.5rem;
-    box-shadow: 5px 10px #black;
-    padding: 1rem 2rem;
-}
-
-#about a{
-    color: blue;
-}
-
-#about hr{
-    border-top: 1px solid gray;
-    margin: 1rem 1rem;
 }

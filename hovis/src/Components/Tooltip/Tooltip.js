@@ -1,5 +1,13 @@
 import React from 'react'
-
+import {
+    FlexibleXYPlot,
+    YAxis,
+    VerticalGridLines,
+    HorizontalGridLines,
+    LineMarkSeriesCanvas,
+    LineMarkSeries,
+    Crosshair
+  } from 'react-vis';
 import './Tooltip.css'
 
 const to_percent = (x) => {

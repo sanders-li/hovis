@@ -1,8 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Signika&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
 body {
     background-color: #333333;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Signika', 'Open Sans', sans-serif;
 }
 
 #test {
@@ -11,10 +12,11 @@ body {
 
 #loading {
     position: fixed;
-    top: 50%;
     left: 50%;
-    margin-left: -100px;
-    margin-top: -50px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    text-align: center;
 }
 
 #map {
@@ -28,7 +30,7 @@ body {
 #dashboard-container {
     position: fixed;
     bottom: 0;
-    width: 100%;
+    width: 80rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -46,11 +48,37 @@ body {
     width: 4rem;
     opacity: 0.8;
     text-align: center;
+    transition: margin-bottom ease-in-out 500ms;
 }
 
 #dashboard {
     display: inline-flex;
     flex-direction: row;
     justify-content: left;
+    /* For some unknown reason, putting dashboard in Material UI Slide component collapses chart. 
+    This forces container to expand to edges with respect with margins */
+    width: calc(100% - 2rem); 
     margin: 0 1rem 1rem 1rem;
+}
+
+.move-enter {
+    opacity: 0.01;
+    transform: scale(1.1);
+}
+
+.move-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: all 300ms;
+}
+
+.move-exit {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.move-exit-active {
+    opacity: 0.01;
+    transform: scale(1.1);
+    transition: all 300ms;
 }
