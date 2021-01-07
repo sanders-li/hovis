@@ -8,8 +8,8 @@ export default function About(props) {
             <h2 id="about-title">About</h2>
             <p>
                 This map contains <b>{props.weeks.length} weeks</b> of hospital capacity data, 
-                ranging from <b>{props.weeks[0]}</b> to <b>{props.weeks[props.weeks.length-1]}</b>, 
-                of <b>{props.hospitals} hospitals</b> in the US.
+                beginning from <b>{props.weeks[0]}</b> and ending on <b>{props.weeks[props.weeks.length-1]}</b>. 
+                The dataset presents a total of <b>{props.hospitals} hospitals</b> in the US.
             </p>
             <p>
                 Data is sourced from <a href="https://healthdata.gov/dataset/covid-19-reported-patient-impact-and-hospital-capacity-facility" target="_blank" rel="noreferrer">

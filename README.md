@@ -2,7 +2,7 @@
 
 Web application to visualize weekly average US hospital occupancy on a facility-level basis.
 
-Data is sourced from [COVID-19 Report Patient Impact and Hospital Capacity by Facility]("https://healthdata.gov/dataset/covid-19-reported-patient-impact-and-hospital-capacity-facility") published by the US Department of Health and Human Services.
+Data is sourced from [COVID-19 Report Patient Impact and Hospital Capacity by Facility](https://healthdata.gov/dataset/covid-19-reported-patient-impact-and-hospital-capacity-facility) published by the US Department of Health and Human Services.
 
 ## Methodology
 
@@ -40,8 +40,8 @@ Metrics are restricted through a soft/hard limit system. **Capacity metrics exce
 ### Additional Information
 
 For implementation details, please read the Jupyter Notebook Files
-- [Geocoder]("https://github.com/sanders-li/hovis/blob/master/hospital_data_geocoder.ipynb") gets the latitude/longitude coordinates of each facility, as well as correcting missing or incorrect address errors.
-- [Metric Calculator]("https://github.com/sanders-li/hovis/blob/master/hospital_dataset_metric_calculation.ipynb") calculates four metrics stated above.
+- [Geocoder](https://github.com/sanders-li/hovis/blob/master/hospital_data_geocoder.ipynb) gets the latitude/longitude coordinates of each facility, as well as correcting missing or incorrect address errors.
+- [Metric Calculator](https://github.com/sanders-li/hovis/blob/master/hospital_dataset_metric_calculation.ipynb) calculates four metrics stated above.
 
 ## Tech Stack
 
@@ -53,4 +53,4 @@ Web Technologies:
 - React (Redux, deck.gl, react-vis, Material-UI)
 
 ## Attributions
-Thanks to Jeff Delaney at [fireship.io]("https://fireship.io/") for his US Gun Violence App that inspired this project and [AdriSolid]("https://github.com/AdriSolid") for his React/Redux timeslider implementation.
+Thanks to Jeff Delaney at [fireship.io](https://fireship.io/) for his US Gun Violence App that inspired this project and [AdriSolid](https://github.com/AdriSolid) for his React/Redux timeslider implementation.

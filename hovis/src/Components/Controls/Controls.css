@@ -1,7 +1,4 @@
 #controls {
-    padding: 0.75rem;
-    background-color: black;
-    border-radius: 1rem;
     display: grid;
     grid-gap: 0.5rem;
     grid-template-rows: 2fr 2fr 2fr 3fr;
@@ -25,11 +22,14 @@
 #controls #color-toggle.enabled {
     color: white;
     background-color: transparent;
+    box-shadow: inset 0 0 0 1px white;
+    transform: none;
 }
 
 #controls #color-toggle.disabled {
     color: black;
     background-color: white;
+    transform: none;
 }
 
 #controls .switch-label {

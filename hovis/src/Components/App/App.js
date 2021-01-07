@@ -54,7 +54,7 @@ class App extends React.Component {
     this.getData = this.getData.bind(this)
     this.setHoverInfo = this.setHoverInfo.bind(this)
     this.aggregateMetricAvgs = this.aggregateMetricAvgs.bind(this)
-    this._handleDashboard = this._handleDashboard.bind(this)
+    this.handleDashboard = this.handleDashboard.bind(this)
     this.handleContrast = this.handleContrast.bind(this)
     this.handleICUSwitch = this.handleICUSwitch.bind(this)
     this.handleCovidSwitch = this.handleCovidSwitch.bind(this)
@@ -111,7 +111,7 @@ class App extends React.Component {
           }
         }, 0)
         hospitals_total.push(hospitals)
-        metric_avg.push({ x: i, y: Math.round(total/n * 10 ** 4)/(10**2) })
+        metric_avg.push({ x: i, y: Math.round(total/n * 10**4) / (10**2) })
       }
       metric_avgs[metric] = metric_avg
     }
@@ -122,7 +122,7 @@ class App extends React.Component {
     })
   }
   
-  _handleDashboard() {
+  handleDashboard() {
     this.setState({ showDashboard: !this.state.showDashboard })
   }
 
@@ -139,8 +139,27 @@ class App extends React.Component {
     this.setState({hoverInfo: info})
   }
 
+  getTooltipData(obj) {
+    const data = []
+    let estimate = false
+    const {hospital_name, address} = obj
+    for (let i=0;i<this.state.weeks.length;i++) {
+      const data_point = this.state.sourceData[this.state.weeks[i]].reduce((arr, v) => {
+          if (v.hospital_name === hospital_name && v.address === address) {
+            if (v[this.state.metric + "_estimate"]) {
+              estimate = true
+            }
+            arr.push({ x: i, y: Math.round(v[this.state.metric] * 10**4) / (10**2) });
+          }
+          return arr
+        }, []).shift()
+      data.push(data_point ? data_point : {x: i, y: 0})
+    }
+    const title = (this.state.icu ? 'ICU Bed ' : 'Inpatient Bed ') + 'Capacity, ' + (this.state.covid ? 'COVID-19' : 'Total') + (estimate ? '*' : '')
+    return {data: data, title: title}
+  }
+
   handleICUSwitch(val) {
-    console.log(val)
     this.setState({
       icu: val
     }, this.handleMetricChange)
@@ -180,10 +199,12 @@ class App extends React.Component {
         </div>
       )
     } else {
+      console.log('Update layers')
       const layers = [
         (this.state.scatterLayer && new ScatterplotLayer({
           id: 'scatter',
           data: this.state.sourceData[this.state.collection_week],
+          colorFormat: 'RGB',
           opacity: 0.6,
           filled: true,
           radiusMinPixels: 3,
@@ -195,8 +216,7 @@ class App extends React.Component {
           onHover: info => this.setHoverInfo(info),
           updateTriggers: {
             getPosition: this.state.metric,
-            getFillColor: this.state.metric,
-            getFillColor: this.state.gradient
+            getFillColor: [this.state.metric, this.state.gradient]
           }
         })),
         (this.state.heatmapLayer && new HeatmapLayer({
@@ -208,7 +228,7 @@ class App extends React.Component {
           opacity: 0.4,
           updateTriggers: {
             getPosition: this.state.metric,
-            getFillColor: this.state.metric
+            getWeight: this.state.metric
           }
         })),
         (this.state.hexagonLayer && new HexagonLayer({
@@ -236,7 +256,13 @@ class App extends React.Component {
             <StaticMap mapboxApiAccessToken={key} mapStyle="mapbox://styles/mapbox/dark-v10" />
           </DeckGL>
           {this.state.hoverInfo.object && (
-            <Tooltip object={this.state.hoverInfo.object} x={this.state.hoverInfo.x} y={this.state.hoverInfo.y} />
+            <Tooltip 
+              object={this.state.hoverInfo.object}
+              weeks={this.state.weeks}
+              chartData={this.getTooltipData(this.state.hoverInfo.object)}
+              x={this.state.hoverInfo.x} 
+              y={this.state.hoverInfo.y} 
+            />
           )}
           <div id="test">
             <div>{this.state.collection_week}</div>
@@ -247,32 +273,34 @@ class App extends React.Component {
             <div>{layers.map(e => e.id).indexOf('hexagon')}</div>
           </div>
           <div id="dashboard-container">
-            <button className="toggle-dashboard" onClick={this._handleDashboard}>
-              <i className={"fas fa-chevron-"+(this.state.showDashboard ? "down" : "up")}></i>
-            </button>
-            <Slide direction="up" in={this.state.showDashboard} mountOnEnter unmountOnExit>
-              <div id="dashboard">
-                <Controls 
-                  highContrast={this.state.highContrast}
-                  handleContrast={this.handleContrast}
-                  handleICUSwitch={this.handleICUSwitch} 
-                  handleCovidSwitch={this.handleCovidSwitch} 
-                  handleScatterToggle={this.handleScatterToggle}
-                  handleHeatmapToggle={this.handleHeatmapToggle}
-                  handleHexagonToggle={this.handleHexagonToggle}
-                  scatterLayer={this.state.scatterLayer}
-                  heatmapLayer={this.state.heatmapLayer}
-                  hexagonLayer={this.state.hexagonLayer}
-                  weeks={this.state.weeks}
-                  hospitals={this.state.num_hospitals}
-                />
-                <TimeSlider 
-                  weeks={this.state.weeks} 
-                  collection_week={this.state.collection_week} 
-                  chartData={this.state.metricAvgs[this.state.metric]} 
-                />
-              </div>
-            </Slide>
+            <Controls 
+              highContrast={this.state.highContrast}
+              handleContrast={this.handleContrast}
+              handleICUSwitch={this.handleICUSwitch} 
+              handleCovidSwitch={this.handleCovidSwitch} 
+              handleScatterToggle={this.handleScatterToggle}
+              handleHeatmapToggle={this.handleHeatmapToggle}
+              handleHexagonToggle={this.handleHexagonToggle}
+              scatterLayer={this.state.scatterLayer}
+              heatmapLayer={this.state.heatmapLayer}
+              hexagonLayer={this.state.hexagonLayer}
+              weeks={this.state.weeks}
+              hospitals={this.state.num_hospitals}
+            />
+            <div id="dashboard">
+              <button className="toggle-dashboard" onClick={this.handleDashboard}>
+                <i className={"fas fa-chevron-"+(this.state.showDashboard ? "down" : "up")}></i>
+              </button>
+              <Slide direction="up" in={this.state.showDashboard} mountOnEnter unmountOnExit>
+                  <div id="timeslider-container">
+                    <TimeSlider 
+                      weeks={this.state.weeks} 
+                      collection_week={this.state.collection_week} 
+                      chartData={this.state.metricAvgs[this.state.metric]} 
+                    />
+                  </div>
+              </Slide>
+            </div>
           </div>
         </div>
       );

@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
 
 #time-slider {
-    margin-left: 1rem;
     padding: 0.5rem 1rem;
     background-color: black;
     display: flex;
