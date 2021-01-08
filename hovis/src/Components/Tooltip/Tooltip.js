@@ -3,8 +3,6 @@ import {
     FlexibleXYPlot,
     XAxis,
     YAxis,
-    VerticalGridLines,
-    HorizontalGridLines,
     LineSeriesCanvas,
     LineSeries,
     Crosshair
@@ -25,7 +23,7 @@ export default class Tooltip extends React.Component {
 
     render() {
         return (
-            <div id="tooltip" style={{left: this.props.x, top: this.props.y}}>
+            <div id="tooltip" style={{left: this.props.x, top: this.props.y}}> 
                 <h1>{this.props.object.hospital_name}</h1>
                 <h2>{this.props.object.address}, {this.props.object.city}, {this.props.object.state}, {this.props.object.zip}</h2>
                 <hr></hr>
@@ -35,16 +33,17 @@ export default class Tooltip extends React.Component {
                         onMouseLeave={() => this.setState({value: false})}
                         yDomain={[0, 100]}
                     >
-                        <VerticalGridLines />
-                        <HorizontalGridLines />
                         <XAxis 
-                            title="Week"
+                            tickFormat={v => this.props.weeks[v].slice(5)}
+                            tickLabelAngle={90}
+                            tickPadding={30}
                         />
                         <YAxis 
                             title="Capacity"
                         />
                         <LineSeries
                             data={this.props.chartData.data}
+                            getNull={(d) => d.y !== null}
                             curve={"curveMonotoneX"}
                             onNearestX= {d => this.setState({value: [d]})}
                         />

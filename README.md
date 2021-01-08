@@ -31,7 +31,7 @@ This data is not guaranteed to be perfect; as such the metrics derived from the 
 
 ### Missing, Redacted, and Wrong Entries
 
-In the case of redacted or null data points, it is possible to derive these data points from data points from tangential data fields. For example, if an average is redacted, it can be calculated by dividing the equivalent sum and coverage data fields. **Direct derivations are not noted in the web application.**
+In the case of redacted or null data points, it is possible to derive these data points from data points from tangential data fields. For example, if an average is redacted, it can be calculated by dividing the equivalent sum and coverage data fields. If the equivalent sum data field is redacted, a value of 4 is assumed as the Department of Health and Human Services redacts values below 4 due to privacy concerns. **These direct derivations and assumptions are not noted in the web application.**
 
 When processing the data, metrics calculated from missing or obviously wrong data points are estimated using similar data fields (e.g. staffed adult beds vs. all adult inpatient beds). **Estimations are noted in the web application with an asterisk (*).** 
 

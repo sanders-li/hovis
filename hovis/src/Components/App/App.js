@@ -149,11 +149,12 @@ class App extends React.Component {
             if (v[this.state.metric + "_estimate"]) {
               estimate = true
             }
-            arr.push({ x: i, y: Math.round(v[this.state.metric] * 10**4) / (10**2) });
+            let capacity = Math.round(v[this.state.metric] * 10**4) / (10**2)
+            arr.push({ x: i, y: capacity });
           }
           return arr
         }, []).shift()
-      data.push(data_point ? data_point : {x: i, y: 0})
+      data.push(data_point ? data_point : {x: i, y: null})
     }
     const title = (this.state.icu ? 'ICU Bed ' : 'Inpatient Bed ') + 'Capacity, ' + (this.state.covid ? 'COVID-19' : 'Total') + (estimate ? '*' : '')
     return {data: data, title: title}
@@ -199,9 +200,8 @@ class App extends React.Component {
         </div>
       )
     } else {
-      console.log('Update layers')
       const layers = [
-        (this.state.scatterLayer && new ScatterplotLayer({
+        new ScatterplotLayer({
           id: 'scatter',
           data: this.state.sourceData[this.state.collection_week],
           colorFormat: 'RGB',
@@ -217,9 +217,10 @@ class App extends React.Component {
           updateTriggers: {
             getPosition: this.state.metric,
             getFillColor: [this.state.metric, this.state.gradient]
-          }
-        })),
-        (this.state.heatmapLayer && new HeatmapLayer({
+          },
+          visible: this.state.scatterLayer
+        }),
+        new HeatmapLayer({
           id: 'heatmap',
           data: this.state.sourceData[this.state.collection_week],
           getPosition: d => [d.lng, d.lat],
@@ -229,9 +230,10 @@ class App extends React.Component {
           updateTriggers: {
             getPosition: this.state.metric,
             getWeight: this.state.metric
-          }
-        })),
-        (this.state.hexagonLayer && new HexagonLayer({
+          },
+          visible: this.state.heatmapLayer
+        }),
+        new HexagonLayer({
           id: 'hexagon',
           data: this.state.sourceData[this.state.collection_week],
           getPosition: d => [d.lng, d.lat],
@@ -243,8 +245,9 @@ class App extends React.Component {
           updateTriggers: {
             getPosition: this.state.metric,
             getElevationWeight: this.state.metric
-          }
-        }))
+          },
+          visible: this.state.hexagonLayer
+        })
       ];
       return (
         <div className="app">
@@ -262,6 +265,10 @@ class App extends React.Component {
               chartData={this.getTooltipData(this.state.hoverInfo.object)}
               x={this.state.hoverInfo.x} 
               y={this.state.hoverInfo.y} 
+
+              info={this.state.hoverInfo}
+              weeks={this.state.weeks}
+              getData={this.getTooltipData}
             />
           )}
           <div id="test">
