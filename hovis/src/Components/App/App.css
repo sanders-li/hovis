@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
 body {
-    background-color: #191a1a;
+    background-color: #212121; /* Adjust to #191a1a for mapbox darkv10 */
     font-family: 'Signika', 'Open Sans', sans-serif;
 }
 

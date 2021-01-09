@@ -1,12 +1,14 @@
 import React from 'react'
 import axios from 'axios'
-import DeckGL from '@deck.gl/react';
+import { DeckGL } from '@deck.gl/react';
 import { ScatterplotLayer } from '@deck.gl/layers';
 import { HeatmapLayer, HexagonLayer } from '@deck.gl/aggregation-layers';
 import { StaticMap } from 'react-map-gl';
 import { CircularProgress, Slide } from '@material-ui/core';
 import { connect } from 'react-redux'
 import chroma from 'chroma-js'
+
+import { BASEMAP } from '@deck.gl/carto'
 
 import Controls from '../Controls/Controls'
 import Tooltip from '../Tooltip/Tooltip'
@@ -253,10 +255,11 @@ class App extends React.Component {
             getCursor={({isDragging}) => isDragging ? 'grabbing' : 'crosshair'}
             pickingRadius={10}
           >
-            <StaticMap 
+            <StaticMap mapStyle={BASEMAP.DARK_MATTER} />
+            {/*<StaticMap 
               mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN} 
               mapStyle="mapbox://styles/mapbox/dark-v10" 
-            />
+            />*/}
           </DeckGL>
             <Tooltip 
               show={(this.state.hoverInfo || {}).picked}

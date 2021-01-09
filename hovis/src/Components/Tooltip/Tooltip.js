@@ -26,24 +26,25 @@ export default class Tooltip extends React.Component {
         }
     }
 
-    componentWillReceiveProps() {
-        if (this.props.hoverInfo.object) {
-            const chartData = this.props.getTooltipData(this.props.hoverInfo.object)
-            this.setState({
-                x: this.props.hoverInfo.x,
-                y: this.props.hoverInfo.y,
-                name: this.props.hoverInfo.object.hospital_name,
-                address: this.props.hoverInfo.object.address,
-                city: this.props.hoverInfo.object.city,
-                state: this.props.hoverInfo.object.state,
-                zip: this.props.hoverInfo.object.zip,
-                lat: this.props.hoverInfo.object.lat,
-                lng: this.props.hoverInfo.object.lng,
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.hoverInfo.object) {
+            const chartData = nextProps.getTooltipData(nextProps.hoverInfo.object)
+            return {
+                x: nextProps.hoverInfo.x,
+                y: nextProps.hoverInfo.y,
+                name: nextProps.hoverInfo.object.hospital_name,
+                address: nextProps.hoverInfo.object.address,
+                city: nextProps.hoverInfo.object.city,
+                state: nextProps.hoverInfo.object.state,
+                zip: nextProps.hoverInfo.object.zip,
+                lat: nextProps.hoverInfo.object.lat,
+                lng: nextProps.hoverInfo.object.lng,
                 title: chartData.title,
                 data: chartData.data
-            })
+            }
+        } else {
+            return null
         }
-        
     }
     
     render() {
