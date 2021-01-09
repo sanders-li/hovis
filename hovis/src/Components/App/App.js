@@ -14,8 +14,6 @@ import TimeSlider from '../TimeSlider/TimeSlider'
 
 import './App.css'
 
-const key = require('./keys.json').mapbox
-
 // Viewport settings
 const INITIAL_VIEW_STATE = {
     longitude: -94,
@@ -255,7 +253,10 @@ class App extends React.Component {
             getCursor={({isDragging}) => isDragging ? 'grabbing' : 'crosshair'}
             pickingRadius={10}
           >
-            <StaticMap mapboxApiAccessToken={key} mapStyle="mapbox://styles/mapbox/dark-v10" />
+            <StaticMap 
+              mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN} 
+              mapStyle="mapbox://styles/mapbox/dark-v10" 
+            />
           </DeckGL>
             <Tooltip 
               show={(this.state.hoverInfo || {}).picked}
