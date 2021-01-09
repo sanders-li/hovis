@@ -43,7 +43,7 @@ export default class Controls extends React.Component {
                     </Grow>
                 </Modal>
                 <div id="bed-label" className="switch-label">
-                    Occupancy: 
+                    Capacity: 
                 </div>
                 <div id="icu" className="switch">
                     <SwitchSelector

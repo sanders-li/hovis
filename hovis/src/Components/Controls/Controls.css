@@ -1,5 +1,6 @@
 #controls {
     display: grid;
+    width: 15rem;
     grid-gap: 0.5rem;
     grid-template-rows: 2fr 2fr 2fr 3fr;
     grid-template-columns: repeat(3, 1fr);
@@ -14,7 +15,7 @@
 
 #controls #color-toggle {
     grid-area: color-toggle;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     padding: 0.5rem;
     outline: none;
 }

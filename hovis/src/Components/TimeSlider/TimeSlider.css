@@ -64,7 +64,7 @@
 #time-slider .slider-container {
     padding-left: 39px;
     padding-right: 11px;
-    margin-top: -35px;
+    margin-top: -44px;
     margin-bottom: 50px;
 }
 
@@ -78,7 +78,7 @@
 #time-slider .slider .MuiSlider-markLabel{
     color: white;
     transform: rotate(90deg);
-    margin: -0.3rem 0.4rem;
+    margin: -0.2rem 0.4rem;
     transform-origin: left top 0;
     font-size: 0.6rem;
     font-family: 'Varela Round';

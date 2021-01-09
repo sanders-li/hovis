@@ -4,30 +4,63 @@ import {
     XAxis,
     YAxis,
     LineSeriesCanvas,
-    LineSeries,
     Crosshair
   } from 'react-vis';
 import './Tooltip.css'
-
-const to_percent = (x) => {
-    return Math.round(x * 10000) / 100
-}
 
 export default class Tooltip extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            value: false
+            value: false,
+            x: 0,
+            y: 0,
+            name: '',
+            address: '',
+            city: '',
+            state: '',
+            zip: '',
+            lat: '',
+            lng: '',
+            chartData: {}
         }
     }
 
+    componentWillReceiveProps() {
+        if (this.props.hoverInfo.object) {
+            const chartData = this.props.getTooltipData(this.props.hoverInfo.object)
+            this.setState({
+                x: this.props.hoverInfo.x,
+                y: this.props.hoverInfo.y,
+                name: this.props.hoverInfo.object.hospital_name,
+                address: this.props.hoverInfo.object.address,
+                city: this.props.hoverInfo.object.city,
+                state: this.props.hoverInfo.object.state,
+                zip: this.props.hoverInfo.object.zip,
+                lat: this.props.hoverInfo.object.lat,
+                lng: this.props.hoverInfo.object.lng,
+                title: chartData.title,
+                data: chartData.data
+            })
+        }
+        
+    }
+    
     render() {
         return (
-            <div id="tooltip" style={{left: this.props.x, top: this.props.y}}> 
-                <h1>{this.props.object.hospital_name}</h1>
-                <h2>{this.props.object.address}, {this.props.object.city}, {this.props.object.state}, {this.props.object.zip}</h2>
+            <div 
+                id="tooltip" 
+                style={{
+                    left: this.state.x, 
+                    top: this.state.y, 
+                    opacity: this.props.show ? 0.9 : 0,
+                    pointerEvents: this.props.show ? 'auto' : 'none'
+                }}
+            > 
+                <h1>{this.state.hospital_name}</h1>
+                <h2>{this.state.address}, {this.state.city}, {this.state.state}, {this.state.zip}</h2>
                 <hr></hr>
-                <h3>{this.props.chartData.title}</h3>
+                <h3>{this.state.title}</h3>
                 <div className="chart-container">
                     <FlexibleXYPlot
                         onMouseLeave={() => this.setState({value: false})}
@@ -41,8 +74,8 @@ export default class Tooltip extends React.Component {
                         <YAxis 
                             title="Capacity"
                         />
-                        <LineSeries
-                            data={this.props.chartData.data}
+                        <LineSeriesCanvas
+                            data={this.state.data}
                             getNull={(d) => d.y !== null}
                             curve={"curveMonotoneX"}
                             onNearestX= {d => this.setState({value: [d]})}
@@ -63,7 +96,7 @@ export default class Tooltip extends React.Component {
                     </FlexibleXYPlot>
                 </div>
                 <hr></hr>
-                <p className="coord">({this.props.object.lat}, {this.props.object.lng})</p>
+                <p className="coord">({this.state.lat}, {this.state.lng})</p>
             </div>
         )
     }

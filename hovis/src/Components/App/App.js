@@ -6,7 +6,6 @@ import { HeatmapLayer, HexagonLayer } from '@deck.gl/aggregation-layers';
 import { StaticMap } from 'react-map-gl';
 import { CircularProgress, Slide } from '@material-ui/core';
 import { connect } from 'react-redux'
-import { CSSTransition } from 'react-transition-group'
 import chroma from 'chroma-js'
 
 import Controls from '../Controls/Controls'
@@ -62,6 +61,7 @@ class App extends React.Component {
     this.handleScatterToggle = this.handleScatterToggle.bind(this)
     this.handleHeatmapToggle = this.handleHeatmapToggle.bind(this)
     this.handleHexagonToggle = this.handleHexagonToggle.bind(this)
+    this.getTooltipData = this.getTooltipData.bind(this)
   }
 
   componentDidMount() {
@@ -69,8 +69,6 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log('App Updated:')
-    console.log(this.state)
     if (prevProps.animationValue !== this.props.animationValue) {
       this.setState({ 
         collection_week: this.state.weeks[this.props.animationValue[0]] 
@@ -135,7 +133,6 @@ class App extends React.Component {
   }
 
   setHoverInfo(info) {
-    console.log(info)
     this.setState({hoverInfo: info})
   }
 
@@ -250,35 +247,22 @@ class App extends React.Component {
         })
       ];
       return (
-        <div className="app">
+        <div className="app" onContextMenu={(e)=> e.preventDefault()}>
           <DeckGL
             initialViewState={INITIAL_VIEW_STATE}
             controller={true}
             layers={layers}
+            getCursor={({isDragging}) => isDragging ? 'grabbing' : 'crosshair'}
+            pickingRadius={10}
           >
             <StaticMap mapboxApiAccessToken={key} mapStyle="mapbox://styles/mapbox/dark-v10" />
           </DeckGL>
-          {this.state.hoverInfo.object && (
             <Tooltip 
-              object={this.state.hoverInfo.object}
+              show={(this.state.hoverInfo || {}).picked}
+              hoverInfo={this.state.hoverInfo}
               weeks={this.state.weeks}
-              chartData={this.getTooltipData(this.state.hoverInfo.object)}
-              x={this.state.hoverInfo.x} 
-              y={this.state.hoverInfo.y} 
-
-              info={this.state.hoverInfo}
-              weeks={this.state.weeks}
-              getData={this.getTooltipData}
+              getTooltipData={this.getTooltipData}
             />
-          )}
-          <div id="test">
-            <div>{this.state.collection_week}</div>
-            <div>{this.state.icu ? 'icu' : 'inpatient'}</div>
-            <div>{this.state.covid ? 'covid' : 'all' }</div>
-            <div>{layers.map(e => e.id).indexOf('scatter')}</div>
-            <div>{layers.map(e => e.id).indexOf('heatmap')}</div>
-            <div>{layers.map(e => e.id).indexOf('hexagon')}</div>
-          </div>
           <div id="dashboard-container">
             <Controls 
               highContrast={this.state.highContrast}

@@ -1,19 +1,15 @@
 import React from 'react'
 import { Slider } from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import {
     FlexibleXYPlot,
+    XAxis,
     YAxis,
-    VerticalGridLines,
-    HorizontalGridLines,
-    LineMarkSeriesCanvas,
-    LineMarkSeries,
+    LineSeries,
     Crosshair
   } from 'react-vis';
 import 'react-vis/dist/style.css';
-import {styles} from './styles'
 import { animationResponse } from '../../actions/animationResponse'
 import './TimeSlider.css'
 
@@ -114,12 +110,14 @@ class TimeSlider extends React.Component {
                             onMouseLeave={() => this.setState({value: false})}
                             yDomain={[0, 100]}
                         >
-                            <VerticalGridLines />
-                            <HorizontalGridLines />
+                            
+                            <XAxis 
+                                tickTotal={this.state.weeks.length}
+                            />
                             <YAxis 
                                 title="Capacity"
                             />
-                            <LineMarkSeries
+                            <LineSeries
                                 data={this.props.chartData}
                                 curve={"curveMonotoneX"}
                                 onNearestX= {d => this.setState({value: [d]})}
@@ -162,4 +160,4 @@ const matchDispatchToProps = dispatch => {
     return bindActionCreators({ animationResponse: animationResponse }, dispatch)
 }
   
-export default connect(null, matchDispatchToProps)(withStyles(styles)(TimeSlider))
+export default connect(null, matchDispatchToProps)(TimeSlider)

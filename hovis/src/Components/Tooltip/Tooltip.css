@@ -6,9 +6,8 @@
     margin: 1rem;
     padding: 1rem;
     z-index: 1;
-    opacity: 0.9;
     text-align: center;
-    transition: ease-in-out 0.2s;
+    transition: transform 50ms ease-in-out, opacity 150ms ease-in-out 50ms;
     border-radius: 0.5rem;
     width: 30%;
 }
