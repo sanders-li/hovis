@@ -44,6 +44,7 @@ body {
     background-color: black;
     border-radius: 1rem;
     pointer-events: auto;
+    width: 16rem;
 }
 
 #dashboard {

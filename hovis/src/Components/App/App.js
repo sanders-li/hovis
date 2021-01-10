@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import { DeckGL } from '@deck.gl/react';
+import DeckGL from '@deck.gl/react';
 import { ScatterplotLayer } from '@deck.gl/layers';
 import { HeatmapLayer, HexagonLayer } from '@deck.gl/aggregation-layers';
 import { StaticMap } from 'react-map-gl';
@@ -128,7 +128,7 @@ class App extends React.Component {
     const {highContrast} = this.state
     this.setState({
       highContrast: !highContrast,
-      gradient: !highContrast ? chroma.scale(['0f2080', 'a95aa1', 'ffff00']).mode('hsl') : chroma.scale(['00ff00', 'ffff00', 'ff0000']).mode('hsl')
+      gradient: !highContrast ? chroma.scale(['0a2080', 'a95aa1', 'ffff00']).mode('hsl') : chroma.scale(['00ff00', 'ffff00', 'ff0000']).mode('hsl')
     })
   }
 
@@ -201,21 +201,24 @@ class App extends React.Component {
         new ScatterplotLayer({
           id: 'scatter',
           data: this.state.sourceData[this.state.collection_week],
-          colorFormat: 'RGB',
-          opacity: 0.6,
           filled: true,
           radiusMinPixels: 3,
-          radiusMaxPixels: 10,
-          radiusScale: 3000,
+          radiusMaxPixels: 15,
+          radiusScale: 4000,
           getPosition: d => [d.lng, d.lat],
-          getFillColor: d => this.state.gradient(Math.min(Math.max(d[this.state.metric], 0), 1)).rgb(),
+          getFillColor: d => {
+              return this.state.gradient(Math.min(Math.max(d[this.state.metric], 0), 1)).rgb()
+                .concat([255 * (Math.min(Math.max(d[this.state.metric], 0), 1) * 0.8 + 0.2 )])
+            },
           pickable: true,
+          autoHighlight: true,
+          highlightColor: d => [255,255,255,150],
           onHover: info => this.setHoverInfo(info),
           updateTriggers: {
             getPosition: this.state.metric,
             getFillColor: [this.state.metric, this.state.gradient]
           },
-          visible: this.state.scatterLayer
+          visible: this.state.scatterLayer,
         }),
         new HeatmapLayer({
           id: 'heatmap',
@@ -223,7 +226,7 @@ class App extends React.Component {
           getPosition: d => [d.lng, d.lat],
           getWeight: d => d[this.state.metric],
           radiusPixels: 50,
-          opacity: 0.4,
+          opacity: 0.3,
           updateTriggers: {
             getPosition: this.state.metric,
             getWeight: this.state.metric
@@ -235,6 +238,9 @@ class App extends React.Component {
           data: this.state.sourceData[this.state.collection_week],
           getPosition: d => [d.lng, d.lat],
           getElevationWeight: d => d[this.state.metric], //weight should be occupied/all for sum of all hospitals in hex
+          getColorWeight: d => d[this.state.metric],
+          colorAggregation: 'MEAN',
+          elevationAggregation: 'MEAN',
           elevationScale: 1000,
           extruded: true,
           radius: 16090,
@@ -255,7 +261,7 @@ class App extends React.Component {
             getCursor={({isDragging}) => isDragging ? 'grabbing' : 'crosshair'}
             pickingRadius={10}
           >
-            <StaticMap mapStyle={BASEMAP.DARK_MATTER} />
+            <StaticMap mapStyle={this.state.highContrast ? BASEMAP.VOYAGER : BASEMAP.DARK_MATTER} />
             {/*<StaticMap 
               mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN} 
               mapStyle="mapbox://styles/mapbox/dark-v10" 

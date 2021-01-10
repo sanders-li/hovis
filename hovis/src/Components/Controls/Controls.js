@@ -43,7 +43,7 @@ export default class Controls extends React.Component {
                     </Grow>
                 </Modal>
                 <div id="bed-label" className="switch-label">
-                    Capacity: 
+                    Category: 
                 </div>
                 <div id="icu" className="switch">
                     <SwitchSelector
@@ -51,17 +51,19 @@ export default class Controls extends React.Component {
                         options={[{label: 'Inpatient', value: false}, {label: 'ICU', value: true}]}
                         backgroundColor={"#353b48"}
                         fontColor={"#f5f6fa"}
+                        selectedBackgroundColor={"green"}
                     />
                 </div>
-                <div id="patient-label" className="switch-label">
-                    Patients: 
+                <div id="metric-label" className="switch-label">
+                    Metric: 
                 </div>
                 <div id="covid" className="switch">
                     <SwitchSelector 
                         onChange={this.props.handleCovidSwitch}
-                        options={[{label: 'All', value: false}, {label: 'COVID-19 Only', value: true}]}
+                        options={[{label: 'Total Bed Capacity', value: false}, {label: 'COVID-19 Occupancy Proportion', value: true}]}
                         backgroundColor={"#353b48"}
                         fontColor={"#f5f6fa"}
+                        selectedBackgroundColor={"green"}
                     />
                 </div>
                 <button id='facilities' className={this.props.scatterLayer ? 'enabled' : 'disabled'} onClick={this.props.handleScatterToggle}>

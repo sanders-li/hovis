@@ -105,14 +105,16 @@ class TimeSlider extends React.Component {
                     </button>
                 </div>
                 <div className="slider-chart-container">
+                    <div>Aggregated Nationwide Capacity</div>
                     <div className="chart-container">
                         <FlexibleXYPlot
                             onMouseLeave={() => this.setState({value: false})}
                             yDomain={[0, 100]}
                         >
-                            
                             <XAxis 
                                 tickTotal={this.state.weeks.length}
+                                style={{text: {display: 'none'}}}
+                                title="Week"
                             />
                             <YAxis 
                                 title="Capacity"

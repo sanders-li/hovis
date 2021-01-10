@@ -1,13 +1,12 @@
 #controls {
     display: grid;
-    width: 15rem;
     grid-gap: 0.5rem;
     grid-template-rows: 2fr 2fr 2fr 3fr;
     grid-template-columns: repeat(3, 1fr);
     grid-template-areas: 
         "color-toggle . about"
         "bed-label icu icu"
-        "patient-label covid covid"
+        "metric-label covid covid"
         "facilities heatmap hexagons";
     justify-content: center;
     align-items: center;
@@ -16,7 +15,8 @@
 #controls #color-toggle {
     grid-area: color-toggle;
     font-size: 1.2rem;
-    padding: 0.5rem;
+    width: 5rem;
+    height: 2.5rem;
     outline: none;
 }
 
@@ -40,20 +40,21 @@
 
 #controls #about-button {
     grid-area: about;
-    margin: 0.5rem;
-    padding: 0.5rem;
+    width: 5rem;
+    height: 2.5rem;
+    font-size: 14px;
 }
 
 #controls #bed-label {
     grid-area: bed-label;
 }
 
-#controls #patient-label {
-    grid-area: patient-label;
+#controls #metric-label {
+    grid-area: metric-label;
 }
 
 #controls .switch {
-    height: 2.5rem;
+    height: 3.5rem;
 }
 
 #controls #icu {
@@ -95,6 +96,7 @@
 
 #controls .button-text {
     margin-top: 0.25rem;
+    font-size: 14px;
 }
 
 #controls button.enabled {

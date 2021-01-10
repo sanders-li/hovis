@@ -9,7 +9,7 @@ export default function About(props) {
             <p>
                 This map contains <b>{props.weeks.length} weeks</b> of hospital capacity data, 
                 beginning from <b>{props.weeks[0]}</b> and ending on <b>{props.weeks[props.weeks.length-1]}</b>. 
-                The dataset presents a total of <b>{props.hospitals} hospitals</b> in the US.
+                The dataset presents the weekly data <b>{props.hospitals} hospitals</b> data in the US.
             </p>
             <p>
                 Data is sourced from <a href="https://healthdata.gov/dataset/covid-19-reported-patient-impact-and-hospital-capacity-facility" target="_blank" rel="noreferrer">
@@ -18,11 +18,21 @@ export default function About(props) {
                 More information can be found on the <a href="https://github.com/CareSet/COVID_Hospital_PUF"  target="_blank" rel="noreferrer">CareSet Github.</a>
             </p>
             <p>
+                The two metrics presented are:
+                <ul>
+                    <li><b>Total bed capacity</b>: all occupied beds / all staffed and available beds</li>
+                    <li><b>COVID-19 occupancy proportion</b>: all beds with confirmed or suspected COVID-19 patients / all occupied beds</li>
+                </ul>
+                These metrics are divided between the <b>inpatient</b> and <b>ICU</b> sections for each facility.
                 Metric calculations requiring an estimate are marked with an asterisks (*).
+            </p>
+            <p>
+                To view a specific week, click on the week label on the <b>Aggregated Nationwide Capacity</b> chart.
+            </p>
+            <p>
                 For information regarding how these metrics were calculated, 
                 please visit my <a href="https://github.com/sanders-li/hovis" target="_blank" rel="noreferrer">Github</a>.
             </p>
-            
             <b>🏥 Enjoy!</b>
             <hr></hr>
             <p>
