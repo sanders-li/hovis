@@ -3,7 +3,7 @@ import {
     FlexibleXYPlot,
     XAxis,
     YAxis,
-    LineSeriesCanvas,
+    LineSeries,
     Crosshair
   } from 'react-vis';
 import './Tooltip.css'
@@ -12,10 +12,10 @@ export default class Tooltip extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            value: false,
+            value: 0,
             x: 0,
             y: 0,
-            name: '',
+            hospital_name: '',
             address: '',
             city: '',
             state: '',
@@ -29,10 +29,12 @@ export default class Tooltip extends React.Component {
     static getDerivedStateFromProps(nextProps, prevState) {
         if (nextProps.hoverInfo.object) {
             const chartData = nextProps.getTooltipData(nextProps.hoverInfo.object)
+            const i = nextProps.weeks.indexOf(nextProps.collection_week)
             return {
+                value: [chartData.data[i]],
                 x: nextProps.hoverInfo.x,
                 y: nextProps.hoverInfo.y,
-                name: nextProps.hoverInfo.object.hospital_name,
+                hospital_name: nextProps.hoverInfo.object.hospital_name,
                 address: nextProps.hoverInfo.object.address,
                 city: nextProps.hoverInfo.object.city,
                 state: nextProps.hoverInfo.object.state,
@@ -48,6 +50,7 @@ export default class Tooltip extends React.Component {
     }
     
     render() {
+        console.log(this.state.data)
         return (
             <div 
                 id="tooltip" 
@@ -75,11 +78,10 @@ export default class Tooltip extends React.Component {
                         <YAxis 
                             title="Capacity"
                         />
-                        <LineSeriesCanvas
+                        <LineSeries
                             data={this.state.data}
                             getNull={(d) => d.y !== null}
-                            curve={"curveMonotoneX"}
-                            onNearestX= {d => this.setState({value: [d]})}
+                            curve={"curveMonotoneX"}      
                         />
                         {this.state.value && 
                             <Crosshair 
@@ -90,8 +92,9 @@ export default class Tooltip extends React.Component {
                                 })} 
                                 itemsFormat={ d => [{
                                     title: 'Capacity',
-                                    value: `${d[0].y}%`,
+                                    value: (d[0].y !== null) ? `${d[0].y}%` : '--',
                                 }]}
+                                className={'crosshair'}
                             />
                         }
                     </FlexibleXYPlot>

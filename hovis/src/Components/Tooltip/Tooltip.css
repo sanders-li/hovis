@@ -55,3 +55,7 @@
 #tooltip .coord {
     font-size: 12px;
 }
+
+#tooltip .crosshair {
+    opacity: 0.9;
+}

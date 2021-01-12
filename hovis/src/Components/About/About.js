@@ -9,7 +9,7 @@ export default function About(props) {
             <p>
                 This map contains <b>{props.weeks.length} weeks</b> of hospital capacity data, 
                 beginning from <b>{props.weeks[0]}</b> and ending on <b>{props.weeks[props.weeks.length-1]}</b>. 
-                The dataset presents the weekly data <b>{props.hospitals} hospitals</b> data in the US.
+                The dataset presents the weekly data of <b>{props.hospitals} hospitals</b> in the US.
             </p>
             <p>
                 Data is sourced from <a href="https://healthdata.gov/dataset/covid-19-reported-patient-impact-and-hospital-capacity-facility" target="_blank" rel="noreferrer">
@@ -20,11 +20,11 @@ export default function About(props) {
             <p>
                 The two metrics presented are:
                 <ul>
-                    <li><b>Total bed capacity</b>: all occupied beds / all staffed and available beds</li>
-                    <li><b>COVID-19 occupancy proportion</b>: all beds with confirmed or suspected COVID-19 patients / all occupied beds</li>
+                    <li><b>Total capacity</b>: All Occupied Beds vs. All Staffed and Available Beds</li>
+                    <li><b>COVID-19 occupancy proportion</b>: All Beds with Confirmed or Suspected COVID-19 Patients vs. All Occupied Beds</li>
                 </ul>
-                These metrics are divided between the <b>inpatient</b> and <b>ICU</b> sections for each facility.
-                Metric calculations requiring an estimate are marked with an asterisks (*).
+                Metrics are separated between <b>inpatient</b> and <b>ICU</b> departments for each facility.
+                No data is outlined but not colored. Metric calculations series requiring an estimate are marked with an asterisks (*).
             </p>
             <p>
                 To view a specific week, click on the week label on the <b>Aggregated Nationwide Capacity</b> chart.

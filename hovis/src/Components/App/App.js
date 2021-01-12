@@ -92,31 +92,21 @@ class App extends React.Component {
   }
 
   aggregateMetricAvgs() {
-    const metric_avgs = {}
-    const hospitals_total = []
+    const all_metric_avgs = {}
     for (const metric in this.state.metricAvgs) {
-      const metric_avg = []
-      let hospitals = 0
+      const metric_avgs = []
       for (let i=0;i<this.state.weeks.length;i++) {
-        let n = 0;
-        const total = this.state.sourceData[this.state.weeks[i]].reduce((acc, curr) => {
-          hospitals++
-          if (curr !== null) {
-            n++
-            return acc + curr[metric]
-          } else {
-            return acc
-          }
-        }, 0)
-        hospitals_total.push(hospitals)
-        metric_avg.push({ x: i, y: Math.round(total/n * 10**4) / (10**2) })
+        const n_d = this.state.sourceData[this.state.weeks[i]].reduce((acc, curr) => {
+          return [acc[0]+curr[metric+'_n'], acc[1]+curr[metric+'_d']]
+        }, [0,0])
+        metric_avgs.push({ x: i, y: Math.round((n_d[0]/n_d[1]) * 10**4) / (10**2) })
       }
-      metric_avgs[metric] = metric_avg
+      all_metric_avgs[metric] = metric_avgs
     }
-    const hospitals_avg = Math.round(hospitals_total.reduce((acc, c) => acc + c) / hospitals_total.length)
+    
     this.setState({
-      metricAvgs: metric_avgs,
-      num_hospitals: hospitals_avg
+      metricAvgs: all_metric_avgs,
+      num_hospitals: this.state.sourceData[this.state.weeks[this.state.weeks.length-1]].length
     })
   }
   
@@ -137,24 +127,26 @@ class App extends React.Component {
   }
 
   getTooltipData(obj) {
-    const data = []
-    let estimate = false
+    const data_series = []
+    let estimated = false
     const {hospital_name, address} = obj
     for (let i=0;i<this.state.weeks.length;i++) {
-      const data_point = this.state.sourceData[this.state.weeks[i]].reduce((arr, v) => {
-          if (v.hospital_name === hospital_name && v.address === address) {
-            if (v[this.state.metric + "_estimate"]) {
-              estimate = true
-            }
-            let capacity = Math.round(v[this.state.metric] * 10**4) / (10**2)
-            arr.push({ x: i, y: capacity });
-          }
-          return arr
-        }, []).shift()
-      data.push(data_point ? data_point : {x: i, y: null})
+      // Try to find hospital data for specific week
+      const hospital = this.state.sourceData[this.state.weeks[i]].find(el => (el.hospital_name === hospital_name && el.address === address))
+      let capacity = null
+      if (hospital) {
+        const estimate = hospital[this.state.metric + "_estimate"]
+        let n = hospital[this.state.metric+'_n']
+        let d = hospital[this.state.metric+'_d']
+        if (estimate !== 'no_data' && n !== null && d !== null) {
+          estimated = estimate ? true : false
+          capacity = Math.round((n/d) * 10**4) / (10**2)
+        }
+      } 
+      data_series.push({x: i, y: capacity})
     }
-    const title = (this.state.icu ? 'ICU Bed ' : 'Inpatient Bed ') + 'Capacity, ' + (this.state.covid ? 'COVID-19' : 'Total') + (estimate ? '*' : '')
-    return {data: data, title: title}
+    const title = (this.state.icu ? 'ICU Bed ' : 'Inpatient Bed ') + 'Capacity, ' + (this.state.covid ? 'COVID-19' : 'Total') + (estimated ? '*' : '')
+    return {data: data_series, title: title}
   }
 
   handleICUSwitch(val) {
@@ -201,31 +193,54 @@ class App extends React.Component {
         new ScatterplotLayer({
           id: 'scatter',
           data: this.state.sourceData[this.state.collection_week],
+          stroked: true,
           filled: true,
           radiusMinPixels: 3,
-          radiusMaxPixels: 15,
+          radiusMaxPixels: 10,
           radiusScale: 4000,
           getPosition: d => [d.lng, d.lat],
+          lineWidthMinPixels: 1,
+          lineWidthMaxPixels: 5,
+          lineWidthScale: 1000,
+          getLineColor: d => {
+            if (d[this.state.metric+'_estimate'] !== 'no_data' && (d[this.state.metric+'_n'] !== null) && (d[this.state.metric+'_d'] !== null)) {
+              return this.state.gradient(Math.min(Math.max((d[this.state.metric+'_n']/d[this.state.metric+'_d']), 0), 1)).rgb()
+                .concat([255 * (Math.min(Math.max((d[this.state.metric+'_n']/d[this.state.metric+'_d']), 0), 1) * 0.8 + 0.2 )])
+            } else {
+              return [255,255,255,50]
+            }
+          },
           getFillColor: d => {
-              return this.state.gradient(Math.min(Math.max(d[this.state.metric], 0), 1)).rgb()
-                .concat([255 * (Math.min(Math.max(d[this.state.metric], 0), 1) * 0.8 + 0.2 )])
-            },
+            if (d[this.state.metric+'_estimate'] !== 'no_data' && (d[this.state.metric+'_n'] !== null) && (d[this.state.metric+'_d'] !== null)) {
+              return this.state.gradient(Math.min(Math.max((d[this.state.metric+'_n']/d[this.state.metric+'_d']), 0), 1)).rgb()
+                .concat([255 * (Math.min(Math.max((d[this.state.metric+'_n']/d[this.state.metric+'_d']), 0), 1) * 0.8 + 0.2 )])
+            } else {
+              return [0,0,0,0]
+            }
+          },
           pickable: true,
           autoHighlight: true,
-          highlightColor: d => [255,255,255,150],
+          highlightColor: [255,255,255,150],
           onHover: info => this.setHoverInfo(info),
           updateTriggers: {
             getPosition: this.state.metric,
+            getLineColor: [this.state.metric, this.state.gradient],
             getFillColor: [this.state.metric, this.state.gradient]
           },
+          /*
+          // Following code prevents z-index fighting but disables highlighting
+          parameters: {
+            depthTest: false
+          },
+          */
           visible: this.state.scatterLayer,
         }),
         new HeatmapLayer({
           id: 'heatmap',
           data: this.state.sourceData[this.state.collection_week],
           getPosition: d => [d.lng, d.lat],
-          getWeight: d => d[this.state.metric],
-          radiusPixels: 50,
+          getWeight: d => d[this.state.metric+'_n'] / d[this.state.metric+'_d'],
+          radiusPixels: 40,
           opacity: 0.3,
           updateTriggers: {
             getPosition: this.state.metric,
@@ -237,14 +252,34 @@ class App extends React.Component {
           id: 'hexagon',
           data: this.state.sourceData[this.state.collection_week],
           getPosition: d => [d.lng, d.lat],
-          getElevationWeight: d => d[this.state.metric], //weight should be occupied/all for sum of all hospitals in hex
-          getColorWeight: d => d[this.state.metric],
-          colorAggregation: 'MEAN',
-          elevationAggregation: 'MEAN',
+          getElevationValue: d => {
+            const n_d = d.reduce((acc, curr) => {
+              let n = curr[this.state.metric+'_n']
+              const d = curr[this.state.metric+'_d']
+              if (n && d) {
+                return [acc[0] + curr[this.state.metric+'_n'], acc[1] + curr[this.state.metric+'_d']]
+              }
+              return acc
+            },[0,0])
+            const metric = n_d[0]/n_d[1] || 0
+            return Math.min(Math.max(metric, 0), 1)
+          }, 
+          getColorValue: d => {
+            const n_d = d.reduce((acc, curr) => {
+              const n = curr[this.state.metric+'_n']
+              const d = curr[this.state.metric+'_d']
+              if (n && d) {
+                return [acc[0] + curr[this.state.metric+'_n'], acc[1] + curr[this.state.metric+'_d']]
+              }
+              return acc
+            },[0,0])
+            const metric = n_d[0]/n_d[1] || 0
+            return Math.min(Math.max(metric, 0), 1)
+          }, 
           elevationScale: 1000,
           extruded: true,
-          radius: 16090,
-          opacity: 0.6,
+          radius: 16090*5,
+          opacity: 0.4,
           updateTriggers: {
             getPosition: this.state.metric,
             getElevationWeight: this.state.metric
@@ -271,6 +306,7 @@ class App extends React.Component {
               show={(this.state.hoverInfo || {}).picked}
               hoverInfo={this.state.hoverInfo}
               weeks={this.state.weeks}
+              collection_week={this.state.collection_week}
               getTooltipData={this.getTooltipData}
             />
           <div id="dashboard-container">

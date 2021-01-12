@@ -26,10 +26,21 @@ export default class Controls extends React.Component {
     render() {
         return (
             <div id="controls">
-                <button id="color-toggle" className={this.props.highContrast ? "enabled" : "disabled"} onClick={this.props.handleContrast}>
+                <button 
+                    id="color-toggle" 
+                    className={this.props.highContrast ? "enabled" : "disabled"} 
+                    onClick={this.props.handleContrast}
+                    title="Toggle contrast"
+                >
                     <i className="fas fa-adjust"></i>
                 </button>
-                <button id="about-button" onClick={this._handleOpen}>About</button>
+                <button 
+                    id="about-button" 
+                    onClick={this._handleOpen}
+                    title="About"
+                >
+                    About
+                </button>
                 <Modal
                     open={this.state.showAbout}
                     className="modal"
@@ -66,15 +77,30 @@ export default class Controls extends React.Component {
                         selectedBackgroundColor={"green"}
                     />
                 </div>
-                <button id='facilities' className={this.props.scatterLayer ? 'enabled' : 'disabled'} onClick={this.props.handleScatterToggle}>
+                <button 
+                    id='facilities' 
+                    className={this.props.scatterLayer ? 'enabled' : 'disabled'} 
+                    onClick={this.props.handleScatterToggle}
+                    title="Individual Facilities"
+                >
                     <p className="emoji">🏥</p>
                     <p className="button-text">Facilities</p>
                 </button>
-                <button id='heatmap' className={this.props.heatmapLayer ? 'enabled' : 'disabled'} onClick={this.props.handleHeatmapToggle}>
+                <button 
+                    id='heatmap' 
+                    className={this.props.heatmapLayer ? 'enabled' : 'disabled'} 
+                    onClick={this.props.handleHeatmapToggle}
+                    title="Capacity Heatmap"
+                >
                     <p className="emoji">🌡️</p>
                     <p className="button-text">Heatmap</p>
                 </button>
-                <button id='hexagon' className={this.props.hexagonLayer ? 'enabled' : 'disabled'} onClick={this.props.handleHexagonToggle}>
+                <button 
+                    id='hexagon' 
+                    className={this.props.hexagonLayer ? 'enabled' : 'disabled'} 
+                    onClick={this.props.handleHexagonToggle}
+                    title="Locally Aggregated Capacities, 50 mile radius"
+                >
                     <p className="emoji">📊</p>
                     <p className="button-text">Hexagons</p>
                 </button>
