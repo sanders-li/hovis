@@ -2,7 +2,7 @@
 
 Web application to visualize weekly average US hospital occupancy on a facility-level basis.
 
-Data is sourced from [COVID-19 Report Patient Impact and Hospital Capacity by Facility](https://healthdata.gov/dataset/covid-19-reported-patient-impact-and-hospital-capacity-facility) published by the US Department of Health and Human Services.
+Data is sourced from [COVID-19 Reported Patient Impact and Hospital Capacity by Facility](https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/anag-cw7u) published by the US Department of Health and Human Services (HHS).
 
 ## Methodology
 
